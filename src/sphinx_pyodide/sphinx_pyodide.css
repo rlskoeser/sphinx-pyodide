@@ -1,0 +1,90 @@
+.pyodide-block {
+  margin: 1em 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pyodide-editor {
+  background: #f5f5f5;
+}
+
+.pyodide-code {
+  width: 100%;
+  min-height: 100px;
+  padding: 10px;
+  /*font-family: "Consolas", "Monaco", "Courier New", monospace;*/
+  font-size: 14px;
+  border: none;
+  background: #f5f5f5;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.pyodide-controls {
+  padding: 10px;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pyodide-run-button {
+  padding: 6px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.pyodide-run-button:hover {
+  background: #0056b3;
+}
+
+.pyodide-status {
+  font-size: smaller;
+  text-align: right;
+  color: #666;
+  background: #efefef;
+  padding-right: 5px;
+  padding-bottom: 5px;
+}
+
+.pyodide-status.loading {
+  color: #007bff;
+}
+
+.pyodide-status.loading::after {
+  content: "⚙️";
+}
+
+.pyodide-status.success::after {
+  content: "✅";
+}
+
+.pyodide-status.error::after {
+  content: "❌";
+}
+
+.pyodide-status.success {
+  color: #28a745;
+}
+
+.pyodide-status.error {
+  color: #dc3545;
+}
+
+.pyodide-output {
+  padding: 10px;
+  background: #efefef;
+  border-top: 1px solid #ddd;
+  margin: 0;
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  max-height: 400px;
+  overflow-y: auto;
+}

@@ -1,0 +1,23 @@
+[project]
+name = "sphinx-pyodide"
+description = "Sphinx extension to add pyodide directive"
+readme = "README.md"
+authors = [
+    { name = "Rebecca Sutton Koeser", email = "rebecca.s.koeser@princeton.edu" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "docutils>=0.22.4",
+    "pygments>=2.19.2",
+    "sphinx>=9.0.4",
+]
+dynamic = ["version"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "hatch>=1.16.2",
+]
