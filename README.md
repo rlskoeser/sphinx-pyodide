@@ -23,6 +23,16 @@ Sphinx extension to add a `pyodide` directive for embedding executable Python co
 pip install sphinx-pyodide
 ```
 
+## Documentation
+
+The full documentation is built from `docs/source/` and includes
+live executable code blocks. To build and view:
+
+```bash
+sphinx-build -b html docs/source docs/build
+open docs/build/index.html
+```
+
 ## Development
 
 ### Setup
@@ -71,13 +81,6 @@ pre-commit run --all-files
 ```bash
 # Run all tests (when available)
 hatch run test
-```
-
-### Running a Local Sphinx Build
-
-```bash
-cd /path/to/test-project
-sphinx-build -b html . _build
 ```
 
 ## License
