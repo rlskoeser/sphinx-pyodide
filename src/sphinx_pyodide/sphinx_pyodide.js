@@ -11,8 +11,8 @@ async function runPyodideCode(block_id) {
 
   if (depsEl) {
     let dependencies  = JSON.parse(depsEl.innerHTML);
-    await pyodide.loadPackage("micropip");
-    const micropip = pyodide.pyimport("micropip");
+    await window.pyodide.loadPackage("micropip");
+    const micropip = window.pyodide.pyimport("micropip");
     await micropip.install(dependencies.packages);
   }
   //override stdout handler to append to output element
@@ -44,29 +44,25 @@ async function initPyodide() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", function (event) {
-  // find and run all pyodide code blocks
+document.addEventListener("DOMContentLoaded", async function () {
   const pyodide_blocks = Array.from(
     document.getElementsByClassName("pyodide-block")
   );
-  // if no blocks are found, do nothing
   if (!pyodide_blocks.length) return;
-  // set block status to loading, so that status displays
-  // while we wait for the async functions to complete
+
   pyodide_blocks.forEach((block) => {
     setPyodideBlockStatus(block.id, "loading");
   });
-  // Initialize Pyodide if needed
-  initPyodide().then(() => {
-    pyodide_blocks.forEach((block) => {
-      runPyodideCode(block.id)
-        .then(() => {
-          setPyodideBlockStatus(block.id, "success");
-        })
-        .catch((err) => {
-          console.log(err)
-          setPyodideBlockStatus(block.id, "error");
-        });
-    });
-  });
+
+  await initPyodide();
+
+  for (const block of pyodide_blocks) {
+    try {
+      await runPyodideCode(block.id);
+      setPyodideBlockStatus(block.id, "success");
+    } catch (err) {
+      console.log(err);
+      setPyodideBlockStatus(block.id, "error");
+    }
+  }
 });
