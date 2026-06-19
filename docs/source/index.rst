@@ -108,6 +108,17 @@ Directive Options
 
 ``:packages:``
     Comma-separated list of packages to install before running code.
+    Entries ending in ``.whl`` are treated as **local wheel files** —
+    paths are resolved relative to the source document and the files
+    are copied into the built site automatically.
+
+    .. code-block:: rst
+
+        .. pyodide::
+            :packages: numpy, ./wheels/mylib-1.0-py3-none-any.whl
+
+            import mylib
+            mylib.hello()
 
 ``:show-output:``
     Flag to display output (currently always shown).

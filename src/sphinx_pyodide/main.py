@@ -60,6 +60,26 @@ class PyodideDirective(Directive):
         ]
         node["setup_code"] = self.options.get("setup-code", "")
 
+        doc_source = self.state.document.get("source", "")
+        doc_dir = Path(doc_source).parent if doc_source else Path()
+
+        packages = []
+        local_packages = {}
+        for entry in node["packages"]:
+            if entry.endswith(".whl"):
+                src_path = (doc_dir / entry).resolve()
+                dest_name = src_path.name
+                local_packages[dest_name] = src_path
+                env = self.state.document.settings.env
+                if not hasattr(env, "pyodide_local_packages"):
+                    env.pyodide_local_packages = {}
+                env.pyodide_local_packages.setdefault(str(src_path), dest_name)
+            else:
+                packages.append(entry)
+
+        node["packages"] = packages
+        node["local_packages"] = list(local_packages.keys())
+
         return [node]
 
 
@@ -68,13 +88,16 @@ def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
     code = node["code"]
     code_id = node["code_id"]
     packages = node["packages"]
+    local_packages = node["local_packages"]
     highlighted_code = highlight(code, PythonLexer(), HtmlFormatter())
 
+    install_list = packages + [f"_static/pyodide-wheels/{w}" for w in local_packages]
+
     deps = ""
-    if packages:
+    if install_list:
         deps = (
             """<script type="application/json" class="deps">"""
-            + json.dumps({"packages": packages})
+            + json.dumps({"packages": install_list})
             + "</script>"
         )
 
@@ -95,13 +118,20 @@ def depart_pyodide_node_html(self: object, node: PyodideNode) -> None:
 
 
 def copy_asset_files(app: Sphinx, exc: Exception | None) -> None:
-    """Add sphinx-pyodide JavaScript and CSS files to static directory."""
+    """Add sphinx-pyodide JS, CSS, and local package files to static dir."""
     if exc is not None:
         return
     static_dir = str(Path(app.outdir) / "_static")
     package = resources.files("sphinx_pyodide")
     for name in ("sphinx_pyodide.js", "sphinx_pyodide.css"):
         copy_asset(str(package / name), static_dir)
+
+    wheels_dir = str(Path(static_dir) / "pyodide-wheels")
+    env = getattr(app.env, "pyodide_local_packages", {})
+    for src_path, dest_name in env.items():
+        dest = Path(wheels_dir) / dest_name
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        copy_asset(src_path, str(dest.parent))
 
 
 def add_assets(
