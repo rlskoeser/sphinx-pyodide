@@ -105,6 +105,10 @@ body[data-theme="dark"] {
   padding-bottom: 5px;
 }
 
+.pyodide-block[data-show-errors] .pyodide-status::before {
+  content: "⚠️ ";
+}
+
 .pyodide-status.loading {
   color: var(--pyodide-status-loading);
 }
@@ -163,6 +167,10 @@ body[data-theme="dark"] {
 .pyodide-noscript-error {
   background: #fff0f0;
   color: #c00;
+}
+
+.pyodide-noscript-error::before {
+  content: "⚠️ ";
 }
 
 .pyodide-output {
