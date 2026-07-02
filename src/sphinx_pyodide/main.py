@@ -13,6 +13,8 @@ from pygments.lexers.python import PythonLexer
 from sphinx.application import Sphinx
 from sphinx.util.fileutil import copy_asset
 
+from sphinx_pyodide import __version__
+
 PYODIDE_JS_URL = "https://cdn.jsdelivr.net/pyodide/v0.29.4/full/pyodide.js"
 
 
@@ -116,6 +118,15 @@ def depart_pyodide_node_html(self: object, node: PyodideNode) -> None:
     self.body.append("</div>")  # type: ignore[attr-defined]
 
 
+def copy_static_assets(app: Sphinx) -> None:
+    """Copy sphinx-pyodide JS and CSS to output _static directory."""
+    static_dir = Path(app.outdir) / "_static"
+    static_dir.mkdir(parents=True, exist_ok=True)
+    package_dir = Path(__file__).parent
+    for name in ("sphinx_pyodide.js", "sphinx_pyodide.css"):
+        copy_asset(str(package_dir / name), str(static_dir))
+
+
 def copy_asset_files(app: Sphinx, exc: Exception | None) -> None:
     """Copy local wheel files to the static directory."""
     if exc is not None:
@@ -146,11 +157,12 @@ def setup(app: Sphinx) -> dict[str, bool | str]:
     """Setup the Sphinx extension."""
     app.add_node(PyodideNode, html=(visit_pyodide_node_html, depart_pyodide_node_html))
     app.add_directive("pyodide", PyodideDirective)
+    app.connect("builder-inited", copy_static_assets)
     app.connect("html-page-context", add_assets)
     app.connect("build-finished", copy_asset_files)
 
     return {
-        "version": "0.1.0",
+        "version": __version__,
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }
