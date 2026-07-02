@@ -25,7 +25,7 @@ _doc_globals: dict[str, dict[str, object]] = {}
 _banner_emitted: dict[str, bool] = {}
 
 DEFAULT_ENABLE_TEXT = """
-This page includes interactive Python code blocks powered by <a href="https://webassembly.org/">WebAssembly"</a>,
+This page includes interactive Python code blocks powered by <a href="https://webassembly.org/">WebAssembly</a>,
 <a href="https://pyodide.org/">Pyodide</a>, and <a href="https://github.com/rlskoeser/sphinx-pyodide">sphinx-pyodide</a>.
 Pregenerated static output is displayed until interaction is enabled.
 """

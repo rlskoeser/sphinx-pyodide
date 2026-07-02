@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1 — 2026-07-02
+
+- Remove stray quote in WebAssembly link in interactive notice
+
 ## 0.1.0 — 2026-07-02
 
 Initial release of `sphinx-pyodide`, a Sphinx extension for embedding
