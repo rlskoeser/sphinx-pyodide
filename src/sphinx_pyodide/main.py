@@ -24,13 +24,16 @@ PYODIDE_JS_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.2/full/pyodide.js"
 _doc_globals: dict[str, dict[str, object]] = {}
 _banner_emitted: dict[str, bool] = {}
 
-DEFAULT_ENABLE_TEXT = "This page contains interactive Python code blocks."
+DEFAULT_ENABLE_TEXT = """
+This page includes interactive Python code blocks powered by <a href="https://webassembly.org/">WebAssembly"</a>,
+<a href="https://pyodide.org/">Pyodide</a>, and <a href="https://github.com/rlskoeser/sphinx-pyodide">sphinx-pyodide</a>.
+Pregenerated static output is displayed until interaction is enabled.
+"""
 
-DEFAULT_NOSCRIPT_TEXT = (
-    "This page contains interactive Python code blocks "
-    "that require JavaScript to execute. "
-    "The code blocks will not run without JavaScript."
-)
+DEFAULT_NOSCRIPT_TEXT = """
+This page contains interactive Python code blocks
+that require JavaScript; please enable for interaction.
+"""
 
 
 def _make_enable_banner(enable_text: str, noscript_text: str) -> str:
