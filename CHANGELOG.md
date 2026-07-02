@@ -3,6 +3,7 @@
 ## 0.1.1 — 2026-07-02
 
 - Remove stray quote in WebAssembly link in interactive notice
+- Fix error in python-publish github actions workflow
 
 ## 0.1.0 — 2026-07-02
 
