@@ -67,9 +67,10 @@ sphinx-build -b html docs/source docs/build
 sphinx-autobuild docs/source docs/build
 ```
 
-**Note:** The pyodide blocks require an HTTP server to run (`file://`
-will not work due to CORS). `sphinx-autobuild` serves on
-`http://127.0.0.1:8000 <http://127.0.0.1:8000>`\_ by default.
+**Note:** Pyodide blocks that install dependencies from local wheels
+require an HTTP server (`file://` will not work due to CORS).
+Options are to build and serve with `python -m http.server -d docs/build`
+or serve with `sphinx-autobuild`.
 
 ## License
 
