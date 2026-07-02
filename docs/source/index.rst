@@ -274,5 +274,7 @@ Build these docs:
     # Auto-reload with live preview (recommended)
     sphinx-autobuild docs/source docs/build
 
-Open http://127.0.0.1:8000 in your browser. A local HTTP server is
-required — pyodide blocks will not work with ``file://`` due to CORS.
+Open http://localhost:8000 in your browser. An HTTP server is
+required for local wheel dependencies, since micropip can not install
+from ``file://`` URLs due to CORS.  (For projects without local wheels,
+browsing static html is probably be sufficient.)
