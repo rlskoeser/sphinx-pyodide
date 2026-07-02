@@ -103,6 +103,27 @@ Multiple packages
     print(f"New York time: {now.strftime('%H:%M:%S')}")
 
 
+Shared context
+~~~~~~~~~~~~~~
+
+All ``.. pyodide::`` blocks on the same page share a single Python
+interpreter. Variables, imports, and state defined in one block
+persist and are available to later blocks on the same page.
+
+.. code-block:: rst
+
+    .. pyodide::
+
+        x = 42
+
+    .. pyodide::
+
+        print(x * 2)  # accesses x from the block above; prints 84
+
+Note that blocks execute in document order — a later block cannot
+access state created by an earlier block until that earlier block has
+finished running.
+
 Directive Options
 -----------------
 
