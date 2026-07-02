@@ -23,7 +23,7 @@ jobs:
       - name: Build release distributions
         run: uv build
       - name: Upload distributions
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           name: release-dists
           path: dist/
@@ -38,11 +38,11 @@ jobs:
       url: https://pypi.org/project/sphinx-pyodide/${{ github.event.release.name }}
     steps:
       - name: Retrieve release distributions
-        uses: actions/download-artifact@95815c38cf0ffa4846d857b520c76cf2eecb1f89 # v4.2.1
+        uses: actions/download-artifact@a9bc5e6ef2cb54c177f32aa5726adaa15e7e2d59 # v3.1.0
         with:
           name: release-dists
           path: dist/
       - name: Publish release distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@0ab0b79471669eb3a4d647e86da9e4d5f60f167b # v1.13.0
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
         with:
           packages-dir: dist/
