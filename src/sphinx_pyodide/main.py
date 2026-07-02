@@ -162,7 +162,6 @@ def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
     <pre class="pyodide-output"></pre>
     <div class="pyodide-status"></div>
     <noscript>
-    {highlighted_code}
     {noscript_output}
     </noscript>
     """
