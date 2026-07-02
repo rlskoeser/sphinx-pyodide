@@ -22,7 +22,6 @@ Use in documentation files.
 
 ```rst
 .. pyodide::
-    :show-output:
 
     print("Hello from Pyodide!")
     import numpy as np
@@ -31,12 +30,11 @@ Use in documentation files.
 
 ### Options
 
-| Option          | Type   | Description                                                                                           |
-| --------------- | ------ | ----------------------------------------------------------------------------------------------------- |
-| `:packages:`    | string | Comma-separated PyPI packages to load (e.g., `numpy, pandas`). Local `.whl` files are also supported. |
-| `:show-output:` | flag   | Display the output inline after the code block.                                                       |
-| `:editable:`    | flag   | Allow users to edit the code before running.                                                          |
-| `:setup-code:`  | string | Python code to run once before the main code (e.g., imports).                                         |
+| Option         | Type   | Description                                                                                           |
+| -------------- | ------ | ----------------------------------------------------------------------------------------------------- |
+| `:packages:`   | string | Comma-separated PyPI packages to load (e.g., `numpy, pandas`). Local `.whl` files are also supported. |
+| `:editable:`   | flag   | Allow users to edit the code before running.                                                          |
+| `:setup-code:` | string | Python code to run once before the main code (e.g., imports).                                         |
 
 ## Development
 

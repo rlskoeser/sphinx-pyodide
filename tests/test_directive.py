@@ -21,7 +21,6 @@ def test_directive_basic_block(app: SphinxTestApp) -> None:
     assert node["packages"] == []
     assert node["local_packages"] == []
     assert node["editable"] is False
-    assert node["show_output"] is False
 
 
 @pytest.mark.sphinx("html", testroot="pyodide")
@@ -59,14 +58,6 @@ def test_directive_with_empty_packages(app: SphinxTestApp) -> None:
     doctree = parse(app, ".. pyodide::\n    :packages:\n\n    pass")
     node = next(iter(doctree.findall(PyodideNode)))
     assert node["packages"] == []
-
-
-@pytest.mark.sphinx("html", testroot="pyodide")
-def test_directive_with_show_output_flag(app: SphinxTestApp) -> None:
-    """:show-output: flag sets show_output to True."""
-    doctree = parse(app, ".. pyodide::\n    :show-output:\n\n    print(1)")
-    node = next(iter(doctree.findall(PyodideNode)))
-    assert node["show_output"] is True
 
 
 @pytest.mark.sphinx("html", testroot="pyodide")

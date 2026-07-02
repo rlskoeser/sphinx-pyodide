@@ -38,7 +38,6 @@ class PyodideDirective(Directive):
 
     has_content = True
     option_spec: ClassVar[dict[str, Any]] = {
-        "show-output": directives.flag,
         "editable": directives.flag,
         "packages": directives.unchanged,
         "setup-code": directives.unchanged,
@@ -52,7 +51,6 @@ class PyodideDirective(Directive):
         node = PyodideNode()
         node["code"] = code
         node["code_id"] = code_id
-        node["show_output"] = "show-output" in self.options
         node["editable"] = "editable" in self.options
         node["packages"] = [
             pkg.strip()
