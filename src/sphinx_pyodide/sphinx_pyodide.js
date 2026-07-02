@@ -1,30 +1,25 @@
 async function runPyodideCode(block_id) {
   const block = document.getElementById(block_id);
-  // get other elements  relative to block
   const outputEl = block.querySelector(".pyodide-output");
-  const statusEl = block.querySelector(".pyodide-status");
   const depsEl = block.querySelector("script.deps");
   const codeEl = block.querySelector(".pyodide-code");
 
   if (outputEl) outputEl.textContent = "";
-  // statusEl.classList.add("loading");
 
   if (depsEl) {
-    let dependencies  = JSON.parse(depsEl.innerHTML);
+    let dependencies = JSON.parse(depsEl.innerHTML);
     await window.pyodide.loadPackage("micropip");
     const micropip = window.pyodide.pyimport("micropip");
     await micropip.install(dependencies.packages);
   }
-  //override stdout handler to append to output element
+
   window.pyodide.setStdout({
-    batched: (msg) =>
-      (outputEl.textContent = outputEl.textContent + "\n" + msg),
+    batched: (msg) => {
+      outputEl.textContent += msg + "\n";
+    },
   });
 
-  // run the code in the code element
   window.pyodide.runPython(`${codeEl.textContent}`);
-  // statusEl.classList.replace("loading", "success");
-  // reset stdout handler to default
   window.pyodide.setStdout();
 }
 
@@ -53,19 +48,33 @@ document.addEventListener("DOMContentLoaded", async function () {
   pyodide_blocks.forEach((block) => {
     const outputEl = block.querySelector(".pyodide-output");
     const statusEl = block.querySelector(".pyodide-status");
-    if (outputEl) outputEl.style.display = "";
-    if (statusEl) statusEl.style.display = "";
+    if (outputEl) outputEl.style.display = "block";
+    if (statusEl) statusEl.style.display = "block";
     setPyodideBlockStatus(block.id, "loading");
   });
 
-  await initPyodide();
+  try {
+    await initPyodide();
+  } catch (err) {
+    const msg = "Pyodide failed to load: " + (err.message || err);
+    document.querySelectorAll(".pyodide-output").forEach((el) => {
+      el.textContent = msg;
+    });
+    document.querySelectorAll(".pyodide-status").forEach((el) => {
+      el.classList.replace("loading", "error");
+    });
+    console.error(msg, err);
+    return;
+  }
 
   for (const block of pyodide_blocks) {
     try {
       await runPyodideCode(block.id);
       setPyodideBlockStatus(block.id, "success");
     } catch (err) {
-      console.log(err);
+      const outputEl = block.querySelector(".pyodide-output");
+      if (outputEl) outputEl.textContent = "Error: " + (err.message || err);
+      console.error(err);
       setPyodideBlockStatus(block.id, "error");
     }
   }

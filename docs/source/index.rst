@@ -107,8 +107,10 @@ Shared context
 ~~~~~~~~~~~~~~
 
 All ``.. pyodide::`` blocks on the same page share a single Python
-interpreter. Variables, imports, and state defined in one block
-persist and are available to later blocks on the same page.
+interpreter. Blocks execute **sequentially and in document order**
+— each block finishes before the next one starts. Variables, imports,
+and state defined in one block persist and are available to later
+blocks.
 
 .. code-block:: rst
 
@@ -120,12 +122,56 @@ persist and are available to later blocks on the same page.
 
         print(x * 2)  # accesses x from the block above; prints 84
 
-Note that blocks execute in document order — a later block cannot
-access state created by an earlier block until that earlier block has
-finished running.
+Directives
+----------
 
-Directive Options
------------------
+.. pyodide::
+    :packages: sphinx_pyodide
+
+    from sphinx_pyodide.main import PyodideDirective, PyodideOutputDirective
+    print("directives loaded")
+
+``pyodide``
+~~~~~~~~~~~
+
+The main directive for embedding executable Python code.
+
+.. code-block:: rst
+
+    .. pyodide::
+        :packages: numpy
+        :editable:
+
+        import numpy as np
+        print(np.array([1, 2, 3]))
+
+.. _pyodide-output-directive:
+
+``pyodide-output``
+~~~~~~~~~~~~~~~~~~
+
+Define named output for use as a noscript fallback. The content
+is stored in the build environment and referenced by the
+``:output:`` option on ``pyodide`` directives.
+
+.. code-block:: rst
+
+    .. pyodide-output:: my-output
+
+        Hello
+        from
+        Pyodide!
+
+    .. pyodide::
+        :output: my-output
+
+        print("Hello\\nfrom\\nPyodide!")
+
+The ``pyodide-output`` directive must appear before the
+``pyodide`` directive that references it.
+
+Options
+-------
 
 ``:packages:``
     Comma-separated list of packages to install before running code.
@@ -167,7 +213,8 @@ Directive Options
 ``:output:``
     Static output shown as a fallback when JavaScript is disabled.
     Typically the expected output of the code block.
-    Use ``\n`` for multi-line output.
+    Use ``\n`` for multi-line, or reference a named output block
+    defined with the :ref:`pyodide-output-directive` directive.
 
     .. code-block:: rst
 
@@ -183,30 +230,27 @@ Directive Options
 
             print("Hello\nfrom\nPyodide!")
 
-    For multi-line content, use the ``.. pyodide-output::`` directive
-    to define named output separately, then reference it by name:
-
-    .. code-block:: rst
-
-        .. pyodide-output:: greet
-
-            Hello
-            from
-            Pyodide!
-
-        .. pyodide::
-            :output: greet
-
-            print("Hello\\nfrom\\nPyodide!")
-
-    The ``pyodide-output`` directive must appear before the
-    ``pyodide`` directive that references it.
-
 ``:editable:``
     Flag to make the code block editable (not yet implemented).
 
 ``:setup-code:``
     Reference code to run before the main block (not yet implemented).
+
+Configuration
+-------------
+
+``pyodide_build_output``
+    Execute code at build time and capture stdout as the
+    :ref:`noscript fallback output <pyodide-output-directive>`.
+    Set to ``True`` in ``conf.py`` to enable.
+
+    .. code-block:: python
+
+        pyodide_build_output = True
+
+    When enabled, any ``pyodide`` block without an explicit
+    ``:output:`` option runs during ``sphinx-build`` and its
+    printed output is used as the static noscript fallback.
 
 
 Development

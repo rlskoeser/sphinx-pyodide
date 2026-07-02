@@ -1,7 +1,9 @@
 """Sphinx extension for embedding executable Python code via Pyodide."""
 
 import hashlib
+import io
 import json
+import sys
 from html import escape as html_escape
 from pathlib import Path
 from typing import Any, ClassVar
@@ -16,7 +18,7 @@ from sphinx.util.fileutil import copy_asset
 
 from sphinx_pyodide import __version__
 
-PYODIDE_JS_URL = "https://cdn.jsdelivr.net/pyodide/v0.29.4/full/pyodide.js"
+PYODIDE_JS_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.2/full/pyodide.js"
 
 
 class PyodideNode(nodes.General, nodes.Element):
@@ -89,8 +91,21 @@ class PyodideDirective(Directive):
         env = self.state.document.settings.env
         if hasattr(env, "pyodide_outputs") and output_val in env.pyodide_outputs:
             node["output"] = env.pyodide_outputs[output_val]
-        else:
+        elif output_val:
             node["output"] = output_val
+        elif getattr(env.config, "pyodide_build_output", False):
+            captured = io.StringIO()
+            old_stdout = sys.stdout
+            sys.stdout = captured
+            try:
+                exec(code, {"__builtins__": __builtins__}, {})
+                node["output"] = captured.getvalue().rstrip("\n")
+            except Exception:
+                node["output"] = ""
+            finally:
+                sys.stdout = old_stdout
+        else:
+            node["output"] = ""
 
         doc_source = self.state.document.get("source", "")
         doc_dir = Path(doc_source).parent if doc_source else Path()
@@ -196,6 +211,7 @@ def add_assets(
 
 def setup(app: Sphinx) -> dict[str, bool | str]:
     """Setup the Sphinx extension."""
+    app.add_config_value("pyodide_build_output", default=False, rebuild="env")
     app.add_node(PyodideNode, html=(visit_pyodide_node_html, depart_pyodide_node_html))
     app.add_node(PyodideOutputNode, html=(_skip_node, None))
     app.add_directive("pyodide", PyodideDirective)

@@ -169,3 +169,16 @@ def test_output_container_present(app: SphinxTestApp) -> None:
     html = (app.outdir / "index.html").read_text(encoding="utf-8")
     assert html.count("pyodide-output") == 2
     assert html.count("pyodide-status") == 2
+
+
+@pytest.mark.sphinx(
+    "html",
+    testroot="pyodide",
+    confoverrides={"pyodide_build_output": True},
+)
+def test_build_output_captured(app: SphinxTestApp) -> None:
+    """Build-time output capture populates noscript fallback."""
+    app.build()
+    html = (app.outdir / "index.html").read_text(encoding="utf-8")
+    assert "pyodide-noscript-output" in html
+    assert "hello" in html
