@@ -35,7 +35,7 @@ async function initPyodide() {
   }
 }
 
-function processPyodideBlocks() {
+async function processPyodideBlocks() {
   const pyodide_blocks = Array.from(
     document.getElementsByClassName("pyodide-block")
   );
@@ -52,19 +52,17 @@ function processPyodideBlocks() {
       setPyodideBlockStatus(block.id, "idle");
     } else {
       setPyodideBlockStatus(block.id, "loading");
-      (async () => {
-        try {
-          await runPyodideCode(block.id);
-          setPyodideBlockStatus(block.id, "success");
-        } catch (err) {
-          if (block.dataset.showErrors) {
-            const outputEl = block.querySelector(".pyodide-output");
-            if (outputEl) outputEl.textContent = "Error: " + (err.message || err);
-          }
-          console.error(err);
-          setPyodideBlockStatus(block.id, "error");
+      try {
+        await runPyodideCode(block.id);
+        setPyodideBlockStatus(block.id, "success");
+      } catch (err) {
+        if (block.dataset.showErrors) {
+          const outputEl = block.querySelector(".pyodide-output");
+          if (outputEl) outputEl.textContent = "Error: " + (err.message || err);
         }
-      })();
+        console.error(err);
+        setPyodideBlockStatus(block.id, "error");
+      }
     }
 
     const editor = block.querySelector(".highlight[contenteditable]");
@@ -108,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
       await initPyodide();
       enableButton.textContent = "\u2713 Enabled";
       enableButton.classList.add("enabled");
-      processPyodideBlocks();
+      await processPyodideBlocks();
     } catch (err) {
       enableButton.textContent = "Failed to load";
       enableButton.classList.add("error");
