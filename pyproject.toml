@@ -18,12 +18,20 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
-dev = [
-    "furo>=2025.12.19",
+test = [
     "pytest>=8.0",
     "pytest-cov>=7.1.0",
+]
+docs = [
+    "numpy>=2.2.6",
+    "pytz>=2026.2",
+]
+dev = [
+    "furo>=2025.12.19",
     "sphinx-autobuild>=2025.8.25; python_version >= '3.11'",
     "ty",
+    { include-group = "test" },
+    { include-group = "docs" },
 ]
 
 [tool.hatch.version]
