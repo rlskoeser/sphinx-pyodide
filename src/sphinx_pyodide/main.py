@@ -94,13 +94,33 @@ class PyodideDirective(Directive):
         elif output_val:
             node["output"] = output_val
         elif getattr(env.config, "pyodide_build_output", False):
+            docname = env.docname
+            if not hasattr(env, "pyodide_globals"):
+                env.pyodide_globals = {}
+            if docname not in env.pyodide_globals:
+                env.pyodide_globals[docname] = {
+                    "__builtins__": __builtins__,
+                    "__name__": "__main__",
+                }
+            globals_dict = env.pyodide_globals[docname]
+
+            setup_code = self.options.get("setup-code", "")
+            if setup_code:
+                try:
+                    exec(setup_code, globals_dict)
+                except Exception as exc:
+                    msg = f"pyodide build-time setup-code failed: {exc}"
+                    self.state.document.reporter.warning(msg, line=self.lineno)
+
             captured = io.StringIO()
             old_stdout = sys.stdout
             sys.stdout = captured
             try:
-                exec(code, {"__builtins__": __builtins__}, {})
+                exec(code, globals_dict)
                 node["output"] = captured.getvalue().rstrip("\n")
-            except Exception:
+            except Exception as exc:
+                msg = f"pyodide build-time capture failed: {exc}"
+                self.state.document.reporter.warning(msg, line=self.lineno)
                 node["output"] = ""
             finally:
                 sys.stdout = old_stdout

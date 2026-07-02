@@ -182,3 +182,26 @@ def test_build_output_captured(app: SphinxTestApp) -> None:
     html = (app.outdir / "index.html").read_text(encoding="utf-8")
     assert "pyodide-noscript-output" in html
     assert "hello" in html
+
+
+@pytest.mark.sphinx(
+    "html",
+    testroot="pyodide-globals",
+)
+def test_shared_globals_between_blocks(app: SphinxTestApp) -> None:
+    """Variable defined in first block is accessible in second block."""
+    app.build()
+    html = (app.outdir / "index.html").read_text(encoding="utf-8")
+    assert "pyodide-noscript-output" in html
+    assert "42" in html
+
+
+@pytest.mark.sphinx(
+    "html",
+    testroot="pyodide-globals",
+)
+def test_setup_code_executed(app: SphinxTestApp) -> None:
+    """setup-code runs before block code and its output is captured."""
+    app.build()
+    html = (app.outdir / "index.html").read_text(encoding="utf-8")
+    assert "hello from setup" in html
