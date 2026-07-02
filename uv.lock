@@ -3,6 +3,18 @@ revision = 3
 requires-python = ">=3.12"
 
 [[package]]
+name = "accessible-pygments"
+version = "0.0.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pygments" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bc/c1/bbac6a50d02774f91572938964c582fff4270eee73ab822a4aeea4d8b11b/accessible_pygments-0.0.5.tar.gz", hash = "sha256:40918d3e6a2b619ad424cb91e556bd3bd8865443d9f22f1dcdf79e33c8046872", size = 1377899, upload-time = "2024-05-10T11:23:10.216Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8d/3f/95338030883d8c8b91223b4e21744b04d11b161a3ef117295d8241f50ab4/accessible_pygments-0.0.5-py3-none-any.whl", hash = "sha256:88ae3211e68a1d0b011504b2ffc1691feafce124b845bd072ab6f9f66f34d4b7", size = 1395903, upload-time = "2024-05-10T11:23:08.421Z" },
+]
+
+[[package]]
 name = "alabaster"
 version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -18,6 +30,19 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/7d/6b/d52e42361e1aa00709585ecc30b3f9684b3ab62530771402248b1b1d6240/babel-2.17.0.tar.gz", hash = "sha256:0c54cffb19f690cdcc52a3b50bcbf71e07a808d1c80d549f2459b9d2cf0afb9d", size = 9951852, upload-time = "2025-02-01T15:17:41.026Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b7/b8/3fe70c75fe32afc4bb507f75563d39bc5642255d1d94f1f23604725780bf/babel-2.17.0-py3-none-any.whl", hash = "sha256:4d0b53093fdfb4b21c92b5213dba5a1b23885afa8383709427046b21c366e5f2", size = 10182537, upload-time = "2025-02-01T15:17:37.39Z" },
+]
+
+[[package]]
+name = "beautifulsoup4"
+version = "4.15.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "soupsieve" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/43/65/318323f98dbee45d42dff61d8f047181bc6f2268a9068cfad035a46be5af/beautifulsoup4-4.15.0.tar.gz", hash = "sha256:288e3ca7d54b06f2ac191970bc275c1939cb46d450b255bf6718b04aa37ab4f7", size = 632571, upload-time = "2026-06-07T16:44:20.453Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/88/c6/92fcd42f1ba33e1184263f25bfabf3d27c383410470f169e4b8163bf9c17/beautifulsoup4-4.15.0-py3-none-any.whl", hash = "sha256:d6f88de62e1d4e38ecb1077eb9724cd0eff29d2a08ca16a401e9b9e93f117cf9", size = 109924, upload-time = "2026-06-07T16:44:21.566Z" },
 ]
 
 [[package]]
@@ -186,6 +211,22 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ae/b6/03bb70946330e88ffec97aefd3ea75ba575cb2e762061e0e62a213befee8/docutils-0.22.4.tar.gz", hash = "sha256:4db53b1fde9abecbb74d91230d32ab626d94f6badfc575d6db9194a49df29968", size = 2291750, upload-time = "2025-12-18T19:00:26.443Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/02/10/5da547df7a391dcde17f59520a231527b8571e6f46fc8efb02ccb370ab12/docutils-0.22.4-py3-none-any.whl", hash = "sha256:d0013f540772d1420576855455d050a2180186c91c15779301ac2ccb3eeb68de", size = 633196, upload-time = "2025-12-18T19:00:18.077Z" },
+]
+
+[[package]]
+name = "furo"
+version = "2025.12.19"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "accessible-pygments" },
+    { name = "beautifulsoup4" },
+    { name = "pygments" },
+    { name = "sphinx" },
+    { name = "sphinx-basic-ng" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ec/20/5f5ad4da6a5a27c80f2ed2ee9aee3f9e36c66e56e21c00fde467b2f8f88f/furo-2025.12.19.tar.gz", hash = "sha256:188d1f942037d8b37cd3985b955839fea62baa1730087dc29d157677c857e2a7", size = 1661473, upload-time = "2025-12-19T17:34:40.889Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f4/b2/50e9b292b5cac13e9e81272c7171301abc753a60460d21505b606e15cf21/furo-2025.12.19-py3-none-any.whl", hash = "sha256:bb0ead5309f9500130665a26bee87693c41ce4dbdff864dbfb6b0dae4673d24f", size = 339262, upload-time = "2025-12-19T17:34:38.905Z" },
 ]
 
 [[package]]
@@ -381,6 +422,15 @@ wheels = [
 ]
 
 [[package]]
+name = "soupsieve"
+version = "2.8.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/47/2c/0a5f6f8ee0d5589e48c7640213ed5175d52cf540a06725b628cc1a45d6ce/soupsieve-2.8.4.tar.gz", hash = "sha256:e121fd02e975c695e4e9e8774a5ee35d74714b59307868dcc5319ad2d9e3328e", size = 121110, upload-time = "2026-05-24T13:55:57.154Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5e/f5/0c41cb68dcae6b7de4fac4188a3a9589e21fb31df21ea3a2e888db95e6c9/soupsieve-2.8.4-py3-none-any.whl", hash = "sha256:e7e6b0769c8f51ed59acab6e994b00621096cfb1c640a7509295987388fbaf65", size = 37304, upload-time = "2026-05-24T13:55:55.406Z" },
+]
+
+[[package]]
 name = "sphinx"
 version = "9.0.4"
 source = { registry = "https://pypi.org/simple" }
@@ -409,6 +459,18 @@ wheels = [
 ]
 
 [[package]]
+name = "sphinx-basic-ng"
+version = "1.0.0b2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "sphinx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/98/0b/a866924ded68efec7a1759587a4e478aec7559d8165fac8b2ad1c0e774d6/sphinx_basic_ng-1.0.0b2.tar.gz", hash = "sha256:9ec55a47c90c8c002b5960c57492ec3021f5193cb26cebc2dc4ea226848651c9", size = 20736, upload-time = "2023-07-08T18:40:54.166Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3c/dd/018ce05c532a22007ac58d4f45232514cd9d6dd0ee1dc374e309db830983/sphinx_basic_ng-1.0.0b2-py3-none-any.whl", hash = "sha256:eb09aedbabfb650607e9b4b68c9d240b90b1e1be221d6ad71d61c52e29f7932b", size = 22496, upload-time = "2023-07-08T18:40:52.659Z" },
+]
+
+[[package]]
 name = "sphinx-pyodide"
 source = { editable = "." }
 dependencies = [
@@ -419,6 +481,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "furo" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "ty" },
@@ -433,6 +496,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "furo", specifier = ">=2025.12.19" },
     { name = "pytest", specifier = ">=8.0" },
     { name = "pytest-cov", specifier = ">=7.1.0" },
     { name = "ty" },
@@ -514,6 +578,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/d7/29/4b12e8ff99dec65487ec5342bd5b51fae1482e93a669d098777d55ca5eda/ty-0.0.22-py3-none-win32.whl", hash = "sha256:de0d88d9f788defddfec5507bf356bfc8b90ee301b7d6204f7609e7ac270276f", size = 9746013, upload-time = "2026-03-12T17:40:32.272Z" },
     { url = "https://files.pythonhosted.org/packages/84/16/e246795ed66ff8ee1a47497019f86ea1b4fb238bfca3068f2e08c52ef03b/ty-0.0.22-py3-none-win_amd64.whl", hash = "sha256:c216f750769ac9f3e9e61feabf3fd44c0697dce762bdcd105443d47e1a81c2b9", size = 10709350, upload-time = "2026-03-12T17:40:40.82Z" },
     { url = "https://files.pythonhosted.org/packages/3b/a4/5aafcebc4f597164381b0a82e7a8780d8f9f52df3884b16909a76282a0da/ty-0.0.22-py3-none-win_arm64.whl", hash = "sha256:49795260b9b9e3d6f04424f8ddb34907fac88c33a91b83478a74cead5dde567f", size = 10137248, upload-time = "2026-03-12T17:40:09.244Z" },
+]
+
+[[package]]
+name = "typing-extensions"
+version = "4.16.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f6/cc/6253133b5bb138fc3306cebfbda2c520f545d36b5be2c7255cc528bb45d6/typing_extensions-4.16.0.tar.gz", hash = "sha256:dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5", size = 113555, upload-time = "2026-07-02T08:40:05.92Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl", hash = "sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8", size = 45571, upload-time = "2026-07-02T08:40:04.659Z" },
 ]
 
 [[package]]

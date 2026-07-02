@@ -1,30 +1,75 @@
+:root {
+  --pyodide-block-border: #ddd;
+  --pyodide-bg-muted: #f5f5f5;
+  --pyodide-bg-white: #fff;
+  --pyodide-bg-status: #efefef;
+  --pyodide-bg-output: #efefef;
+  --pyodide-color-muted: #666;
+  --pyodide-btn-bg: #007bff;
+  --pyodide-btn-hover: #0056b3;
+  --pyodide-btn-text: #fff;
+  --pyodide-status-loading: #007bff;
+  --pyodide-status-success: #28a745;
+  --pyodide-status-error: #dc3545;
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme="light"]) {
+    --pyodide-block-border: #444;
+    --pyodide-bg-muted: #2a2a2a;
+    --pyodide-bg-white: #1e1e1e;
+    --pyodide-bg-status: #2a2a2a;
+    --pyodide-bg-output: #1e1e1e;
+    --pyodide-color-muted: #aaa;
+    --pyodide-btn-bg: #1a73e8;
+    --pyodide-btn-hover: #1557b0;
+    --pyodide-status-loading: #4a9eff;
+    --pyodide-status-success: #2ea043;
+    --pyodide-status-error: #f85149;
+  }
+}
+
+body[data-theme="dark"] {
+  --pyodide-block-border: #444;
+  --pyodide-bg-muted: #2a2a2a;
+  --pyodide-bg-white: #1e1e1e;
+  --pyodide-bg-status: #2a2a2a;
+  --pyodide-bg-output: #1e1e1e;
+  --pyodide-color-muted: #aaa;
+  --pyodide-btn-bg: #1a73e8;
+  --pyodide-btn-hover: #1557b0;
+  --pyodide-status-loading: #4a9eff;
+  --pyodide-status-success: #2ea043;
+  --pyodide-status-error: #f85149;
+}
+
 .pyodide-block {
   margin: 1em 0;
-  border: 1px solid #ddd;
+  border: 1px solid var(--pyodide-block-border);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .pyodide-editor {
-  background: #f5f5f5;
+  background: var(--pyodide-bg-muted);
 }
 
 .pyodide-code {
   width: 100%;
   min-height: 100px;
   padding: 10px;
-  /*font-family: "Consolas", "Monaco", "Courier New", monospace;*/
   font-size: 14px;
   border: none;
-  background: #f5f5f5;
+  background: var(--pyodide-bg-muted);
+  color: inherit;
   resize: vertical;
   box-sizing: border-box;
 }
 
 .pyodide-controls {
   padding: 10px;
-  background: #fff;
-  border-top: 1px solid #ddd;
+  background: var(--pyodide-bg-white);
+  border-top: 1px solid var(--pyodide-block-border);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -32,8 +77,8 @@
 
 .pyodide-run-button {
   padding: 6px 16px;
-  background: #007bff;
-  color: white;
+  background: var(--pyodide-btn-bg);
+  color: var(--pyodide-btn-text);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -41,20 +86,20 @@
 }
 
 .pyodide-run-button:hover {
-  background: #0056b3;
+  background: var(--pyodide-btn-hover);
 }
 
 .pyodide-status {
   font-size: smaller;
   text-align: right;
-  color: #666;
-  background: #efefef;
+  color: var(--pyodide-color-muted);
+  background: var(--pyodide-bg-status);
   padding-right: 5px;
   padding-bottom: 5px;
 }
 
 .pyodide-status.loading {
-  color: #007bff;
+  color: var(--pyodide-status-loading);
 }
 
 .pyodide-status.loading::after {
@@ -70,17 +115,18 @@
 }
 
 .pyodide-status.success {
-  color: #28a745;
+  color: var(--pyodide-status-success);
 }
 
 .pyodide-status.error {
-  color: #dc3545;
+  color: var(--pyodide-status-error);
 }
 
 .pyodide-output {
   padding: 10px;
-  background: #efefef;
-  border-top: 1px solid #ddd;
+  background: var(--pyodide-bg-output);
+  color: inherit;
+  border-top: 1px solid var(--pyodide-block-border);
   margin: 0;
   font-family: "Consolas", "Monaco", "Courier New", monospace;
   font-size: 13px;

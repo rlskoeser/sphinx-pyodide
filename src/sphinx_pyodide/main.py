@@ -2,7 +2,6 @@
 
 import hashlib
 import json
-from importlib import resources
 from pathlib import Path
 from typing import Any, ClassVar
 
@@ -118,15 +117,10 @@ def depart_pyodide_node_html(self: object, node: PyodideNode) -> None:
 
 
 def copy_asset_files(app: Sphinx, exc: Exception | None) -> None:
-    """Add sphinx-pyodide JS, CSS, and local package files to static dir."""
+    """Copy local wheel files to the static directory."""
     if exc is not None:
         return
-    static_dir = str(Path(app.outdir) / "_static")
-    package = resources.files("sphinx_pyodide")
-    for name in ("sphinx_pyodide.js", "sphinx_pyodide.css"):
-        copy_asset(str(package / name), static_dir)
-
-    wheels_dir = str(Path(static_dir) / "pyodide-wheels")
+    wheels_dir = str(Path(app.outdir) / "_static" / "pyodide-wheels")
     env = getattr(app.env, "pyodide_local_packages", {})
     for src_path, dest_name in env.items():
         dest = Path(wheels_dir) / dest_name
