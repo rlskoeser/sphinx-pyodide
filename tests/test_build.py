@@ -58,7 +58,11 @@ class _PyodideBlockParser(HTMLParser):
             self._captured.append(data)
 
 
-@pytest.mark.sphinx("html", testroot="pyodide")
+@pytest.mark.sphinx(
+    "html",
+    testroot="pyodide",
+    confoverrides={"pyodide_build_output": False},
+)
 def test_build_succeeds(app: SphinxTestApp, warning: StringIO) -> None:
     """Sphinx build completes without warnings."""
     app.build()

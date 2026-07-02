@@ -20,6 +20,8 @@ from sphinx_pyodide import __version__
 
 PYODIDE_JS_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.2/full/pyodide.js"
 
+_doc_globals: dict[str, dict[str, object]] = {}
+
 
 class PyodideNode(nodes.General, nodes.Element):
     """Custom node for Pyodide code blocks."""
@@ -95,14 +97,12 @@ class PyodideDirective(Directive):
             node["output"] = output_val
         elif getattr(env.config, "pyodide_build_output", False):
             docname = env.docname
-            if not hasattr(env, "pyodide_globals"):
-                env.pyodide_globals = {}
-            if docname not in env.pyodide_globals:
-                env.pyodide_globals[docname] = {
+            if docname not in _doc_globals:
+                _doc_globals[docname] = {
                     "__builtins__": __builtins__,
                     "__name__": "__main__",
                 }
-            globals_dict = env.pyodide_globals[docname]
+            globals_dict = _doc_globals[docname]
 
             setup_code = self.options.get("setup-code", "")
             if setup_code:
@@ -195,6 +195,7 @@ def depart_pyodide_node_html(self: object, node: PyodideNode) -> None:
 
 def copy_static_assets(app: Sphinx) -> None:
     """Copy sphinx-pyodide JS and CSS to output _static directory."""
+    _doc_globals.clear()
     static_dir = Path(app.outdir) / "_static"
     static_dir.mkdir(parents=True, exist_ok=True)
     package_dir = Path(__file__).parent
@@ -227,10 +228,20 @@ def add_assets(
         app.add_js_file("sphinx_pyodide.js")
         app.add_css_file("sphinx_pyodide.css")
 
+        msg = "This page contains interactive Python code blocks that require JavaScript to execute."
+        if app.config.pyodide_build_output:
+            msg += " Static output is displayed below for reference."
+        else:
+            msg += " The code blocks will not run without JavaScript."
+        banner = (
+            f'<noscript><div class="pyodide-noscript-banner">{msg}</div></noscript>'
+        )
+        doctree.insert(0, nodes.raw("", banner, format="html"))
+
 
 def setup(app: Sphinx) -> dict[str, bool | str]:
     """Setup the Sphinx extension."""
-    app.add_config_value("pyodide_build_output", default=False, rebuild="env")
+    app.add_config_value("pyodide_build_output", default=True, rebuild="env")
     app.add_node(PyodideNode, html=(visit_pyodide_node_html, depart_pyodide_node_html))
     app.add_node(PyodideOutputNode, html=(_skip_node, None))
     app.add_directive("pyodide", PyodideDirective)

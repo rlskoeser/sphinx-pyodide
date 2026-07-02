@@ -129,6 +129,17 @@ body[data-theme="dark"] {
   color: var(--pyodide-status-error);
 }
 
+.pyodide-noscript-banner {
+  margin: 1em 0;
+  padding: 10px 14px;
+  background: var(--pyodide-bg-status);
+  color: var(--pyodide-color-muted);
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid var(--pyodide-block-border);
+  border-radius: 4px;
+}
+
 .pyodide-noscript {
   margin: 0;
   padding: 10px;
