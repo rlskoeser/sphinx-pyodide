@@ -24,14 +24,24 @@ PYODIDE_JS_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.2/full/pyodide.js"
 _doc_globals: dict[str, dict[str, object]] = {}
 _banner_emitted: dict[str, bool] = {}
 
-ENABLE_BANNER_HTML = """\
+DEFAULT_ENABLE_TEXT = "This page contains interactive Python code blocks."
+
+DEFAULT_NOSCRIPT_TEXT = (
+    "This page contains interactive Python code blocks "
+    "that require JavaScript to execute. "
+    "The code blocks will not run without JavaScript."
+)
+
+
+def _make_enable_banner(enable_text: str, noscript_text: str) -> str:
+    return f"""\
 <div class="admonition note" id="pyodide-enable-banner">
   <p class="admonition-title">Note</p>
-  <p>This page contains interactive Python code blocks.</p>
+  <p>{enable_text}</p>
   <button class="pyodide-enable-button" id="pyodide-enable-button">\u25b6 Enable Interactive</button>
 </div>
 <noscript>
-  <div class="pyodide-noscript-banner">This page contains interactive Python code blocks that require JavaScript to execute. The code blocks will not run without JavaScript.</div>
+  <div class="pyodide-noscript-banner">{noscript_text}</div>
 </noscript>"""
 
 
@@ -94,7 +104,14 @@ class PyodideDirective(Directive):
         result: list[PyodideNode | nodes.raw] = []
         if not _banner_emitted.get(docname):
             _banner_emitted[docname] = True
-            result.append(nodes.raw("", ENABLE_BANNER_HTML, format="html"))
+            enable_text = getattr(
+                env.config, "pyodide_enable_text", DEFAULT_ENABLE_TEXT
+            )
+            noscript_text = getattr(
+                env.config, "pyodide_noscript_text", DEFAULT_NOSCRIPT_TEXT
+            )
+            banner = _make_enable_banner(enable_text, noscript_text)
+            result.append(nodes.raw("", banner, format="html"))
 
         code = "\n".join(self.content)
         code_id = hashlib.md5(code.encode()).hexdigest()[:8]
@@ -281,6 +298,12 @@ def setup(app: Sphinx) -> dict[str, bool | str]:
     """Setup the Sphinx extension."""
     app.add_config_value("pyodide_build_output", default=True, rebuild="env")
     app.add_config_value("pyodide_show_errors", default=False, rebuild="env")
+    app.add_config_value(
+        "pyodide_enable_text", default=DEFAULT_ENABLE_TEXT, rebuild="env"
+    )
+    app.add_config_value(
+        "pyodide_noscript_text", default=DEFAULT_NOSCRIPT_TEXT, rebuild="env"
+    )
     app.add_node(PyodideNode, html=(visit_pyodide_node_html, depart_pyodide_node_html))
     app.add_node(PyodideOutputNode, html=(_skip_node, None))
     app.add_directive("pyodide", PyodideDirective)
