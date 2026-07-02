@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from html import escape as html_escape
 from pathlib import Path
 from typing import Any, ClassVar
 
@@ -22,6 +23,30 @@ class PyodideNode(nodes.General, nodes.Element):
     """Custom node for Pyodide code blocks."""
 
 
+class PyodideOutputNode(nodes.Element, nodes.General):
+    """Node for named output blocks used as noscript fallback."""
+
+
+def _skip_node(self: object, node: nodes.Element) -> None:
+    """Skip rendering for nodes that only store data."""
+    raise nodes.SkipNode
+
+
+class PyodideOutputDirective(Directive):
+    """Store named output content for use as noscript fallback."""
+
+    has_content = True
+    required_arguments = 1
+
+    def run(self) -> list[PyodideOutputNode]:
+        """Store content in environment for later use by pyodide directives."""
+        env = self.state.document.settings.env
+        if not hasattr(env, "pyodide_outputs"):
+            env.pyodide_outputs = {}
+        env.pyodide_outputs[self.arguments[0]] = "\n".join(self.content)
+        return [PyodideOutputNode()]
+
+
 class PyodideDirective(Directive):
     """
     Directive for embedding executable Python code using Pyodide.
@@ -39,6 +64,7 @@ class PyodideDirective(Directive):
     has_content = True
     option_spec: ClassVar[dict[str, Any]] = {
         "editable": directives.flag,
+        "output": directives.unchanged,
         "packages": directives.unchanged,
         "setup-code": directives.unchanged,
     }
@@ -58,6 +84,13 @@ class PyodideDirective(Directive):
             if pkg.strip()
         ]
         node["setup_code"] = self.options.get("setup-code", "")
+
+        output_val = self.options.get("output", "")
+        env = self.state.document.settings.env
+        if hasattr(env, "pyodide_outputs") and output_val in env.pyodide_outputs:
+            node["output"] = env.pyodide_outputs[output_val]
+        else:
+            node["output"] = output_val
 
         doc_source = self.state.document.get("source", "")
         doc_dir = Path(doc_source).parent if doc_source else Path()
@@ -88,6 +121,7 @@ def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
     code_id = node["code_id"]
     packages = node["packages"]
     local_packages = node["local_packages"]
+    output = node.get("output", "")
     highlighted_code = highlight(code, PythonLexer(), HtmlFormatter())
 
     install_list = packages + [f"/_static/pyodide-wheels/{w}" for w in local_packages]
@@ -100,6 +134,11 @@ def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
             + "</script>"
         )
 
+    noscript_output = ""
+    if output:
+        escaped = html_escape(output.replace("\\n", "\n"))
+        noscript_output = f'<pre class="pyodide-noscript-output">{escaped}</pre>'
+
     html = f"""
     <div class="pyodide-block" id="pyodide-block-{code_id}">
     {deps}
@@ -107,6 +146,10 @@ def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
     {highlighted_code}
     <pre class="pyodide-output"></pre>
     <div class="pyodide-status"></div>
+    <noscript>
+    {highlighted_code}
+    {noscript_output}
+    </noscript>
     """
     self.body.append(html)  # type: ignore[attr-defined]
 
@@ -154,7 +197,9 @@ def add_assets(
 def setup(app: Sphinx) -> dict[str, bool | str]:
     """Setup the Sphinx extension."""
     app.add_node(PyodideNode, html=(visit_pyodide_node_html, depart_pyodide_node_html))
+    app.add_node(PyodideOutputNode, html=(_skip_node, None))
     app.add_directive("pyodide", PyodideDirective)
+    app.add_directive("pyodide-output", PyodideOutputDirective)
     app.connect("builder-inited", copy_static_assets)
     app.connect("html-page-context", add_assets)
     app.connect("build-finished", copy_asset_files)

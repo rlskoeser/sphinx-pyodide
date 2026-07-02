@@ -51,6 +51,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (!pyodide_blocks.length) return;
 
   pyodide_blocks.forEach((block) => {
+    const outputEl = block.querySelector(".pyodide-output");
+    const statusEl = block.querySelector(".pyodide-status");
+    if (outputEl) outputEl.style.display = "";
+    if (statusEl) statusEl.style.display = "";
     setPyodideBlockStatus(block.id, "loading");
   });
 

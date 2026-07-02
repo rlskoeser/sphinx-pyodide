@@ -164,8 +164,43 @@ Directive Options
     The resulting ``.whl`` files are placed in ``dist/`` (uv build) or
     ``wheels/`` (pip wheel) by default.
 
-``:show-output:``
-    Flag to display output (currently always shown).
+``:output:``
+    Static output shown as a fallback when JavaScript is disabled.
+    Typically the expected output of the code block.
+    Use ``\n`` for multi-line output.
+
+    .. code-block:: rst
+
+        .. pyodide::
+            :output: Hello, world!
+
+            print("Hello, world!")
+
+    .. code-block:: rst
+
+        .. pyodide::
+            :output: Hello\nfrom\nPyodide!
+
+            print("Hello\nfrom\nPyodide!")
+
+    For multi-line content, use the ``.. pyodide-output::`` directive
+    to define named output separately, then reference it by name:
+
+    .. code-block:: rst
+
+        .. pyodide-output:: greet
+
+            Hello
+            from
+            Pyodide!
+
+        .. pyodide::
+            :output: greet
+
+            print("Hello\\nfrom\\nPyodide!")
+
+    The ``pyodide-output`` directive must appear before the
+    ``pyodide`` directive that references it.
 
 ``:editable:``
     Flag to make the code block editable (not yet implemented).

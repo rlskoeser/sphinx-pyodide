@@ -6,7 +6,7 @@ import pytest
 from sphinx.testing.restructuredtext import parse
 from sphinx.testing.util import SphinxTestApp
 
-from sphinx_pyodide.main import PyodideNode
+from sphinx_pyodide.main import PyodideNode, PyodideOutputNode
 
 
 @pytest.mark.sphinx("html", testroot="pyodide")
@@ -88,6 +88,48 @@ def test_directive_multiple_blocks(app: SphinxTestApp) -> None:
     assert nodes[0]["code"] == "a = 1"
     assert nodes[1]["code"] == "b = 2"
     assert nodes[0]["code_id"] != nodes[1]["code_id"]
+
+
+@pytest.mark.sphinx("html", testroot="pyodide")
+def test_directive_with_output_option(app: SphinxTestApp) -> None:
+    """:output: option sets static output for noscript fallback."""
+    doctree = parse(
+        app,
+        "\n".join(
+            [
+                ".. pyodide::",
+                "    :output: 42",
+                "",
+                "    print(42)",
+            ]
+        ),
+    )
+    node = next(iter(doctree.findall(PyodideNode)))
+    assert node["output"] == "42"
+
+
+@pytest.mark.sphinx("html", testroot="pyodide")
+def test_directive_with_named_output(app: SphinxTestApp) -> None:
+    """Named output block is resolved from the environment."""
+    doctree = parse(
+        app,
+        "\n".join(
+            [
+                ".. pyodide-output:: greet",
+                "",
+                "    Hello from Pyodide!",
+                "",
+                ".. pyodide::",
+                "    :output: greet",
+                "",
+                "    print('hi')",
+            ]
+        ),
+    )
+    outputs = list(doctree.findall(PyodideOutputNode))
+    assert len(outputs) == 1
+    node = next(iter(doctree.findall(PyodideNode)))
+    assert node["output"] == "Hello from Pyodide!"
 
 
 @pytest.mark.sphinx("html", testroot="pyodide")

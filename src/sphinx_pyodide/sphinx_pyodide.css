@@ -96,6 +96,7 @@ body[data-theme="dark"] {
 }
 
 .pyodide-status {
+  display: none;
   font-size: smaller;
   text-align: right;
   color: var(--pyodide-color-muted);
@@ -128,7 +129,28 @@ body[data-theme="dark"] {
   color: var(--pyodide-status-error);
 }
 
+.pyodide-noscript {
+  margin: 0;
+  padding: 10px;
+  background: var(--pyodide-bg-status);
+  color: var(--pyodide-color-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.pyodide-noscript-output {
+  margin: 0;
+  padding: 10px;
+  background: var(--pyodide-bg-output);
+  color: inherit;
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  border-top: 1px solid var(--pyodide-block-border);
+}
+
 .pyodide-output {
+  display: none;
   padding: 10px;
   background: var(--pyodide-bg-output);
   color: inherit;
