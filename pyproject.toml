@@ -19,8 +19,9 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "hatch>=1.16.2",
-    "ty"
+    "pytest>=8.0",
+    "pytest-cov>=7.1.0",
+    "ty",
 ]
 
 [tool.hatch.version]

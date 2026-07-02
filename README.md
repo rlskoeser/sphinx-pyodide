@@ -2,6 +2,20 @@
 
 Sphinx extension to add a `pyodide` directive for embedding executable Python code blocks in documentation using Pyodide (Python in the browser via WebAssembly).
 
+## Installation
+
+```bash
+pip install sphinx-pyodide
+```
+
+## Configuration
+
+Add to your Sphinx `conf.py`:
+
+```python
+extensions = ["sphinx_pyodide"]
+```
+
 ## Usage
 
 ```rst
@@ -13,74 +27,51 @@ Sphinx extension to add a `pyodide` directive for embedding executable Python co
     print(np.array([1, 2, 3]))
 ```
 
-## Requirements
+### Options
 
-- Python 3.12+
-
-## Installation
-
-```bash
-pip install sphinx-pyodide
-```
-
-## Documentation
-
-The full documentation is built from `docs/source/` and includes
-live executable code blocks. To build and view:
-
-```bash
-sphinx-build -b html docs/source docs/build
-open docs/build/index.html
-```
+| Option          | Type   | Description                                                                                           |
+| --------------- | ------ | ----------------------------------------------------------------------------------------------------- |
+| `:packages:`    | string | Comma-separated PyPI packages to load (e.g., `numpy, pandas`). Local `.whl` files are also supported. |
+| `:show-output:` | flag   | Display the output inline after the code block.                                                       |
+| `:editable:`    | flag   | Allow users to edit the code before running.                                                          |
+| `:setup-code:`  | string | Python code to run once before the main code (e.g., imports).                                         |
 
 ## Development
 
 ### Setup
 
-Create and activate a python virtual environment, and install
-the package in editable mode with development dependencies.
-
 ```bash
-uv venv --python 3.12
-source .venv/bin/activate  # or `hatch shell`
-
-uv pip install -e ".[dev]"
-```
-
-### Build
-
-```bash
-hatch build
+uv sync --dev
 ```
 
 ### Linting & Type Checking
 
 ```bash
-# Run ruff linter
 ruff check src/
-
-# Run ruff with auto-fix
-ruff check src/ --fix
-
-# Run ty type checker
 ty check src/
 ```
 
 ### Pre-commit Hooks
 
 ```bash
-# Install pre-commit hooks
 pre-commit install
-
-# Run all hooks
 pre-commit run --all-files
 ```
 
 ### Testing
 
+Tests use `sphinx.testing` fixtures via `pytest`.
+
 ```bash
-# Run all tests (when available)
-hatch run test
+pytest tests/
+pytest tests/ -k test_name
+pytest tests/ --cov=src/sphinx_pyodide
+```
+
+### Build Documentation
+
+```bash
+sphinx-build -b html docs/source docs/build
 ```
 
 ## License

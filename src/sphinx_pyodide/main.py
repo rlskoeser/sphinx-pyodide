@@ -142,7 +142,7 @@ def add_assets(
     doctree: nodes.document,
 ) -> None:
     """Add sphinx Pyodide script and CSS to pages that use it."""
-    if doctree and doctree.traverse(PyodideNode):
+    if doctree and next(doctree.findall(PyodideNode), None) is not None:
         app.add_js_file(PYODIDE_JS_URL)
         app.add_js_file("sphinx_pyodide.js")
         app.add_css_file("sphinx_pyodide.css")
