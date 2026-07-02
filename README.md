@@ -77,6 +77,11 @@ require an HTTP server (`file://` will not work due to CORS).
 Options are to build and serve with `python -m http.server -d docs/build`
 or serve with `sphinx-autobuild`.
 
+## Acknowledgments
+
+Substantial portions of this code were developed with assistance from
+agentic AI coding tools (primarily ClaudeCode & OpenCode and associated models).
+
 ## License
 
 Apache 2.0
