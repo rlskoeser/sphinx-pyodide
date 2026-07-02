@@ -92,7 +92,7 @@ def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
     local_packages = node["local_packages"]
     highlighted_code = highlight(code, PythonLexer(), HtmlFormatter())
 
-    install_list = packages + [f"_static/pyodide-wheels/{w}" for w in local_packages]
+    install_list = packages + [f"/_static/pyodide-wheels/{w}" for w in local_packages]
 
     deps = ""
     if install_list:
