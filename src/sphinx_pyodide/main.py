@@ -218,7 +218,7 @@ def copy_static_assets(app: Sphinx) -> None:
     static_dir.mkdir(parents=True, exist_ok=True)
     package_dir = Path(__file__).parent
     for name in ("sphinx_pyodide.js", "sphinx_pyodide.css"):
-        copy_asset(str(package_dir / name), str(static_dir))
+        copy_asset(str(package_dir / name), str(static_dir), force=True)
 
 
 def copy_asset_files(app: Sphinx, exc: Exception | None) -> None:
@@ -230,7 +230,7 @@ def copy_asset_files(app: Sphinx, exc: Exception | None) -> None:
     for src_path, dest_name in env.items():
         dest = Path(wheels_dir) / dest_name
         dest.parent.mkdir(parents=True, exist_ok=True)
-        copy_asset(src_path, str(dest.parent))
+        copy_asset(src_path, str(dest.parent), force=True)
 
 
 def add_assets(
