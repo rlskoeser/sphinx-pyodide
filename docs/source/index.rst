@@ -1,6 +1,11 @@
 sphinx-pyodide
 ==============
 
+.. toctree::
+   :hidden:
+
+   changelog
+
 ``sphinx-pyodide`` is a Sphinx extension that adds a ``pyodide`` directive
 for embedding **executable Python code blocks** in documentation. Code runs
 in the browser via `Pyodide <https://pyodide.org/>`_ (CPython compiled to
@@ -248,7 +253,7 @@ Options
 
             print(1 / 0)
 
-    Overrides the global :ref:`pyodide_show_errors` setting for this
+    Overrides the global ``pyodide_show_errors`` setting for this
     block.
 
 ``:editable:``
