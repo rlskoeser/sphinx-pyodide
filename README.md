@@ -2,7 +2,7 @@
 
 Sphinx extension to add a `pyodide` directive for embedding executable Python code blocks in documentation using [Pyodide](https://pyodide.org/) (Python in the browser via WebAssembly).
 
-[Documentation](https://rlskoeser.github.io/sphinx-pyodide/)
+For full details and examples, refer to the [documentation](https://rlskoeser.github.io/sphinx-pyodide/).
 
 ## How to Use
 
