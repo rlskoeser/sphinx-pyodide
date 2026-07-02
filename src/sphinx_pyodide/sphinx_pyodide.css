@@ -50,6 +50,12 @@ body[data-theme="dark"] {
   overflow: hidden;
 }
 
+.pyodide-block .highlight {
+  border: none;
+  margin: 0;
+  border-radius: 0;
+}
+
 .pyodide-editor {
   background: var(--pyodide-bg-muted);
 }
