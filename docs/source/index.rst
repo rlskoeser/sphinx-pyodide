@@ -120,6 +120,29 @@ Directive Options
             import mylib
             mylib.hello()
 
+    Place ``.whl`` files in a ``wheels/`` directory next to your source
+    document (e.g., ``docs/source/wheels/``). They are copied into the
+    built site automatically.
+
+    Transitive PyPI dependencies declared in the wheel's metadata are
+    resolved automatically by ``micropip`` at runtime.
+
+    **Tip:** To generate wheels for packages not on PyPI:
+
+    .. code-block:: bash
+
+        # Your own package only
+        uv build --wheel
+
+        # Your package + all its dependencies
+        uv pip wheel . -w wheels/
+
+        # Third-party package (download wheel from PyPI)
+        uv pip wheel requests -w wheels/
+
+    The resulting ``.whl`` files are placed in ``dist/`` (uv build) or
+    ``wheels/`` (pip wheel) by default.
+
 ``:show-output:``
     Flag to display output (currently always shown).
 
@@ -145,4 +168,11 @@ Build these docs:
 
 .. code-block:: bash
 
+    # Build once
     sphinx-build -b html docs/source docs/build
+
+    # Auto-reload with live preview (recommended)
+    sphinx-autobuild docs/source docs/build
+
+Open http://127.0.0.1:8000 in your browser. A local HTTP server is
+required — pyodide blocks will not work with ``file://`` due to CORS.

@@ -60,8 +60,16 @@ pytest tests/ --cov=src/sphinx_pyodide
 ### Build Documentation
 
 ```bash
+# One-time build
 sphinx-build -b html docs/source docs/build
+
+# Auto-reload with live preview (recommended for development)
+sphinx-autobuild docs/source docs/build
 ```
+
+**Note:** The pyodide blocks require an HTTP server to run (`file://`
+will not work due to CORS). `sphinx-autobuild` serves on
+`http://127.0.0.1:8000 <http://127.0.0.1:8000>`\_ by default.
 
 ## License
 
