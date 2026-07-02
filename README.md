@@ -2,21 +2,21 @@
 
 Sphinx extension to add a `pyodide` directive for embedding executable Python code blocks in documentation using [Pyodide](https://pyodide.org/en/stable/) (Python in the browser via WebAssembly).
 
-## Installation
+## How to Use
+
+Install with `pip`, `uv`, or similar:
 
 ```bash
 pip install sphinx-pyodide
 ```
 
-## Configuration
-
-Add to your Sphinx `conf.py`:
+Enable the extension by including in your Sphinx `conf.py`:
 
 ```python
 extensions = ["sphinx_pyodide"]
 ```
 
-## Usage
+Use in documentation files.
 
 ```rst
 .. pyodide::
@@ -40,22 +40,11 @@ extensions = ["sphinx_pyodide"]
 
 ### Setup
 
+Install development dependencies; install pre-commit hooks on first setup.
+
 ```bash
 uv sync --dev
-```
-
-### Linting & Type Checking
-
-```bash
-ruff check src/
-ty check src/
-```
-
-### Pre-commit Hooks
-
-```bash
 pre-commit install
-pre-commit run --all-files
 ```
 
 ### Testing
