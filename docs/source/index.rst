@@ -33,7 +33,9 @@ Write a ``.. pyodide::`` directive with the Python code as content:
 
         print("Hello from Pyodide!")
 
-It renders as an executable block in the browser:
+Build-time output is displayed as static output below each block.
+Interactive execution requires opt-in — click **Enable Interactive**
+to load Pyodide and run blocks live in the browser:
 
 .. pyodide::
 
@@ -152,9 +154,10 @@ The main directive for embedding executable Python code.
 ``pyodide-output``
 ~~~~~~~~~~~~~~~~~~
 
-Define named output for use as a noscript fallback. The content
+Define named output for use as static output. The content
 is stored in the build environment and referenced by the
-``:output:`` option on ``pyodide`` directives.
+``:output:`` option on ``pyodide`` directives. It is displayed
+until the user enables interactive execution.
 
 .. code-block:: rst
 
@@ -213,10 +216,12 @@ Options
     ``wheels/`` (pip wheel) by default.
 
 ``:output:``
-    Static output shown as a fallback when JavaScript is disabled.
+    Static output displayed in the output panel.
     Typically the expected output of the code block.
     Use ``\n`` for multi-line, or reference a named output block
     defined with the :ref:`pyodide-output-directive` directive.
+    The static output is replaced when the user enables interactive
+    execution.
 
     .. code-block:: rst
 
@@ -247,7 +252,8 @@ Options
     block.
 
 ``:editable:``
-    Flag to make the code block editable (not yet implemented).
+    Flag to make the code block editable. Users can modify the code
+    directly in the browser before clicking **▶ Run**.
 
 ``:setup-code:``
     Reference code to run before the main block. Useful for defining
@@ -268,24 +274,25 @@ Configuration
 -------------
 
 ``pyodide_build_output``
-    Execute code at build time and capture stdout as the
-    :ref:`noscript fallback output <pyodide-output-directive>`.
+    Execute code at build time and capture stdout as static output.
     Defaults to ``True``.
 
     .. code-block:: python
 
         pyodide_build_output = False
 
-    Set to ``False`` to disable. When enabled, any ``pyodide``
-    block without an explicit ``:output:`` option runs during
-    ``sphinx-build`` and its printed output is used as the
-    static noscript fallback.
+    When enabled (default), any ``pyodide`` block without an explicit
+    ``:output:`` option runs during ``sphinx-build``. The printed output
+    is displayed in the output panel and remains visible until the user
+    enables interactive execution. Clicking **Enable Interactive** runs
+    the code live in Pyodide and replaces the static output.
 
-    If the code raises an exception at build time, the error
-    message and traceback are captured and displayed with
-    a ``[Build-time error]`` label and distinct styling.
-    This only affects the ``<noscript>`` fallback — it is always
-    visible.
+    If the code raises an exception at build time, the error message
+    and traceback are captured and displayed with a ``[Build-time error]``
+    label and distinct styling.
+
+    Set to ``False`` to disable build-time capture. Blocks will show
+    an empty output panel until the user enables interactive mode.
 
 ``pyodide_show_errors``
     Show runtime errors in the live browser output.
@@ -303,6 +310,23 @@ Configuration
     Can be overridden per-block with the ``:show-errors:``
     directive option.
 
+``pyodide_enable_text``
+    HTML content for the enable banner note displayed before the
+    first ``pyodide`` block. Defaults to a message describing the
+    interactive blocks and static output. May contain HTML links.
+
+    .. code-block:: python
+
+        pyodide_enable_text = 'Run code in the browser via <a href="https://pyodide.org/">Pyodide</a>.'
+
+``pyodide_noscript_text``
+    Text for the noscript fallback banner, shown when JavaScript is
+    disabled.
+
+    .. code-block:: python
+
+        pyodide_noscript_text = "Interactive code blocks require JavaScript."
+
 
 Development
 -----------
@@ -311,9 +335,7 @@ Development
 
     git clone https://github.com/your-org/sphinx-pyodide
     cd sphinx-pyodide
-    uv venv --python 3.12
-    source .venv/bin/activate
-    uv pip install -e ".[dev]"
+    uv sync --dev
 
 Build these docs:
 

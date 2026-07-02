@@ -18,7 +18,10 @@ extensions = ["sphinx_pyodide"]
 
 The output blocks support light and dark mode. For best results, use a Sphinx theme with built-in dark mode support such as [Furo](https://github.com/pradyunsg/furo) or the [PyData Sphinx Theme](https://github.com/pydata/pydata-sphinx-theme).
 
-Use in documentation files.
+Use in documentation files. Build-time output is displayed as static
+output below each block. Interactive execution requires opt-in —
+click the **Enable Interactive** button in the note above the first
+block to load Pyodide and run blocks live in the browser.
 
 ```rst
 .. pyodide::
@@ -30,11 +33,13 @@ Use in documentation files.
 
 ### Options
 
-| Option         | Type   | Description                                                                                           |
-| -------------- | ------ | ----------------------------------------------------------------------------------------------------- |
-| `:packages:`   | string | Comma-separated PyPI packages to load (e.g., `numpy, pandas`). Local `.whl` files are also supported. |
-| `:editable:`   | flag   | Allow users to edit the code before running.                                                          |
-| `:setup-code:` | string | Python code to run once before the main code (e.g., imports).                                         |
+| Option          | Type   | Description                                                                                           |
+| --------------- | ------ | ----------------------------------------------------------------------------------------------------- |
+| `:packages:`    | string | Comma-separated PyPI packages to load (e.g., `numpy, pandas`). Local `.whl` files are also supported. |
+| `:editable:`    | flag   | Allow users to edit the code before running.                                                          |
+| `:output:`      | string | Static output displayed in the output panel until interactive execution is enabled.                   |
+| `:show-errors:` | flag   | Display runtime errors in the live browser output.                                                    |
+| `:setup-code:`  | string | Python code to run once before the main block (e.g., imports).                                        |
 
 ## Development
 
