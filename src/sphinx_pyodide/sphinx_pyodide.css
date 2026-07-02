@@ -160,6 +160,11 @@ body[data-theme="dark"] {
   border-top: 1px solid var(--pyodide-block-border);
 }
 
+.pyodide-noscript-error {
+  background: #fff0f0;
+  color: #c00;
+}
+
 .pyodide-output {
   display: none;
   padding: 10px;

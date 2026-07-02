@@ -103,6 +103,8 @@ Multiple packages
     print(f"New York time: {now.strftime('%H:%M:%S')}")
 
 
+.. _shared-context:
+
 Shared context
 ~~~~~~~~~~~~~~
 
@@ -230,11 +232,37 @@ Options
 
             print("Hello\nfrom\nPyodide!")
 
+``:show-errors:``
+    Flag to display runtime errors in this block's live browser output.
+    Errors are still logged to the console regardless.
+
+    .. code-block:: rst
+
+        .. pyodide::
+            :show-errors:
+
+            print(1 / 0)
+
+    Overrides the global :ref:`pyodide_show_errors` setting for this
+    block.
+
 ``:editable:``
     Flag to make the code block editable (not yet implemented).
 
 ``:setup-code:``
-    Reference code to run before the main block (not yet implemented).
+    Reference code to run before the main block. Useful for defining
+    helper functions or imports used across multiple blocks (via
+    :ref:`shared context <shared-context>`).
+
+    .. code-block:: rst
+
+        .. pyodide::
+            :setup-code: import math
+
+            print(math.pi)
+
+    The setup code runs in the same namespace as the block code and
+    any earlier blocks on the page.
 
 Configuration
 -------------
@@ -242,15 +270,38 @@ Configuration
 ``pyodide_build_output``
     Execute code at build time and capture stdout as the
     :ref:`noscript fallback output <pyodide-output-directive>`.
-    Set to ``True`` in ``conf.py`` to enable.
+    Defaults to ``True``.
 
     .. code-block:: python
 
-        pyodide_build_output = True
+        pyodide_build_output = False
 
-    When enabled, any ``pyodide`` block without an explicit
-    ``:output:`` option runs during ``sphinx-build`` and its
-    printed output is used as the static noscript fallback.
+    Set to ``False`` to disable. When enabled, any ``pyodide``
+    block without an explicit ``:output:`` option runs during
+    ``sphinx-build`` and its printed output is used as the
+    static noscript fallback.
+
+    If the code raises an exception at build time, the error
+    message and traceback are captured and displayed with
+    a ``[Build-time error]`` label and distinct styling.
+    This only affects the ``<noscript>`` fallback — it is always
+    visible.
+
+``pyodide_show_errors``
+    Show runtime errors in the live browser output.
+    Defaults to ``False``.
+
+    .. code-block:: python
+
+        pyodide_show_errors = True
+
+    When ``False`` (default), errors in ``pyodide`` blocks are
+    only logged to the browser console. Set to ``True`` to
+    display them in the output panel alongside successful
+    results.
+
+    Can be overridden per-block with the ``:show-errors:``
+    directive option.
 
 
 Development

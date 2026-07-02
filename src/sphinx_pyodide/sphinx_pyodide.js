@@ -72,8 +72,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       await runPyodideCode(block.id);
       setPyodideBlockStatus(block.id, "success");
     } catch (err) {
-      const outputEl = block.querySelector(".pyodide-output");
-      if (outputEl) outputEl.textContent = "Error: " + (err.message || err);
+      if (block.dataset.showErrors) {
+        const outputEl = block.querySelector(".pyodide-output");
+        if (outputEl) outputEl.textContent = "Error: " + (err.message || err);
+      }
       console.error(err);
       setPyodideBlockStatus(block.id, "error");
     }

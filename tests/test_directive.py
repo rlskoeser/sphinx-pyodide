@@ -139,3 +139,19 @@ def test_directive_code_id_stable(app: SphinxTestApp) -> None:
     node = next(iter(doctree.findall(PyodideNode)))
     assert len(node["code_id"]) == 8
     assert node["code_id"].isalnum()
+
+
+@pytest.mark.sphinx("html", testroot="pyodide")
+def test_directive_show_errors_flag(app: SphinxTestApp) -> None:
+    """:show-errors: flag sets show_errors to True."""
+    doctree = parse(app, ".. pyodide::\n    :show-errors:\n\n    x = 1")
+    node = next(iter(doctree.findall(PyodideNode)))
+    assert node["show_errors"] is True
+
+
+@pytest.mark.sphinx("html", testroot="pyodide")
+def test_directive_show_errors_default(app: SphinxTestApp) -> None:
+    """Without :show-errors: flag, show_errors is False by default."""
+    doctree = parse(app, ".. pyodide::\n\n    x = 1")
+    node = next(iter(doctree.findall(PyodideNode)))
+    assert node["show_errors"] is False

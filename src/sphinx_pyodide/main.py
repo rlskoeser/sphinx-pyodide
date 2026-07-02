@@ -4,6 +4,7 @@ import hashlib
 import io
 import json
 import sys
+import traceback
 from html import escape as html_escape
 from pathlib import Path
 from typing import Any, ClassVar
@@ -71,6 +72,7 @@ class PyodideDirective(Directive):
         "output": directives.unchanged,
         "packages": directives.unchanged,
         "setup-code": directives.unchanged,
+        "show-errors": directives.flag,
     }
 
     def run(self) -> list[PyodideNode]:
@@ -91,6 +93,9 @@ class PyodideDirective(Directive):
 
         output_val = self.options.get("output", "")
         env = self.state.document.settings.env
+        node["show_errors"] = "show-errors" in self.options or getattr(
+            env.config, "pyodide_show_errors", False
+        )
         if hasattr(env, "pyodide_outputs") and output_val in env.pyodide_outputs:
             node["output"] = env.pyodide_outputs[output_val]
         elif output_val:
@@ -114,16 +119,22 @@ class PyodideDirective(Directive):
 
             captured = io.StringIO()
             old_stdout = sys.stdout
+            old_stderr = sys.stderr
             sys.stdout = captured
+            sys.stderr = captured
             try:
                 exec(code, globals_dict)
                 node["output"] = captured.getvalue().rstrip("\n")
-            except Exception as exc:
-                msg = f"pyodide build-time capture failed: {exc}"
-                self.state.document.reporter.warning(msg, line=self.lineno)
-                node["output"] = ""
+            except Exception:
+                output = captured.getvalue()
+                if output:
+                    output += "\n"
+                output += traceback.format_exc()
+                node["output"] = output.rstrip("\n")
+                node["has_error"] = True
             finally:
                 sys.stdout = old_stdout
+                sys.stderr = old_stderr
         else:
             node["output"] = ""
 
@@ -157,6 +168,8 @@ def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
     packages = node["packages"]
     local_packages = node["local_packages"]
     output = node.get("output", "")
+    show_errors = node.get("show_errors", False)
+    show_errors_attr = ' data-show-errors="true"' if show_errors else ""
     highlighted_code = highlight(code, PythonLexer(), HtmlFormatter())
 
     install_list = packages + [f"/_static/pyodide-wheels/{w}" for w in local_packages]
@@ -172,10 +185,15 @@ def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
     noscript_output = ""
     if output:
         escaped = html_escape(output.replace("\\n", "\n"))
-        noscript_output = f'<pre class="pyodide-noscript-output">{escaped}</pre>'
+        if node.get("has_error"):
+            escaped = "[Build-time error]\n" + escaped
+            cls = "pyodide-noscript-output pyodide-noscript-error"
+        else:
+            cls = "pyodide-noscript-output"
+        noscript_output = f'<pre class="{cls}">{escaped}</pre>'
 
     html = f"""
-    <div class="pyodide-block" id="pyodide-block-{code_id}">
+    <div class="pyodide-block" id="pyodide-block-{code_id}"{show_errors_attr}>
     {deps}
     <pre class="pyodide-code" style="display: none;">{code}</pre>
     {highlighted_code}
@@ -242,6 +260,7 @@ def add_assets(
 def setup(app: Sphinx) -> dict[str, bool | str]:
     """Setup the Sphinx extension."""
     app.add_config_value("pyodide_build_output", default=True, rebuild="env")
+    app.add_config_value("pyodide_show_errors", default=False, rebuild="env")
     app.add_node(PyodideNode, html=(visit_pyodide_node_html, depart_pyodide_node_html))
     app.add_node(PyodideOutputNode, html=(_skip_node, None))
     app.add_directive("pyodide", PyodideDirective)
