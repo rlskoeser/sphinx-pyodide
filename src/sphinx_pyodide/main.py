@@ -22,6 +22,17 @@ from sphinx_pyodide import __version__
 PYODIDE_JS_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.2/full/pyodide.js"
 
 _doc_globals: dict[str, dict[str, object]] = {}
+_banner_emitted: dict[str, bool] = {}
+
+ENABLE_BANNER_HTML = """\
+<div class="admonition note" id="pyodide-enable-banner">
+  <p class="admonition-title">Note</p>
+  <p>This page contains interactive Python code blocks.</p>
+  <button class="pyodide-enable-button" id="pyodide-enable-button">\u25b6 Enable Interactive</button>
+</div>
+<noscript>
+  <div class="pyodide-noscript-banner">This page contains interactive Python code blocks that require JavaScript to execute. The code blocks will not run without JavaScript.</div>
+</noscript>"""
 
 
 class PyodideNode(nodes.General, nodes.Element):
@@ -75,8 +86,16 @@ class PyodideDirective(Directive):
         "show-errors": directives.flag,
     }
 
-    def run(self) -> list[PyodideNode]:
+    def run(self) -> list[PyodideNode | nodes.raw]:
         """Create Pyodide node from directive content and options."""
+        env = self.state.document.settings.env
+        docname = env.docname
+
+        result: list[PyodideNode | nodes.raw] = []
+        if not _banner_emitted.get(docname):
+            _banner_emitted[docname] = True
+            result.append(nodes.raw("", ENABLE_BANNER_HTML, format="html"))
+
         code = "\n".join(self.content)
         code_id = hashlib.md5(code.encode()).hexdigest()[:8]
 
@@ -158,7 +177,8 @@ class PyodideDirective(Directive):
         node["packages"] = packages
         node["local_packages"] = list(local_packages.keys())
 
-        return [node]
+        result.append(node)
+        return result
 
 
 def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
@@ -182,15 +202,16 @@ def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
             + "</script>"
         )
 
-    noscript_output = ""
+    output_content = ""
     if output:
         escaped = html_escape(output.replace("\\n", "\n"))
+        output_cls = "pyodide-output has-output"
         if node.get("has_error"):
             escaped = "[Build-time error]\n" + escaped
-            cls = "pyodide-noscript-output pyodide-noscript-error"
-        else:
-            cls = "pyodide-noscript-output"
-        noscript_output = f'<pre class="{cls}">{escaped}</pre>'
+            output_cls += " has-error"
+        output_content = f'<pre class="{output_cls}">{escaped}</pre>'
+    else:
+        output_content = '<pre class="pyodide-output"></pre>'
 
     if node["editable"]:
         highlighted_code = highlighted_code.replace(
@@ -208,11 +229,8 @@ def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
     {deps}
     {editor}
     {highlighted_code}
-    <pre class="pyodide-output"></pre>
+    {output_content}
     <div class="pyodide-status">{run_button}</div>
-    <noscript>
-    {noscript_output}
-    </noscript>
     """
     self.body.append(html)  # type: ignore[attr-defined]
 
@@ -225,6 +243,7 @@ def depart_pyodide_node_html(self: object, node: PyodideNode) -> None:
 def copy_static_assets(app: Sphinx) -> None:
     """Copy sphinx-pyodide JS and CSS to output _static directory."""
     _doc_globals.clear()
+    _banner_emitted.clear()
     static_dir = Path(app.outdir) / "_static"
     static_dir.mkdir(parents=True, exist_ok=True)
     package_dir = Path(__file__).parent
@@ -256,16 +275,6 @@ def add_assets(
         app.add_js_file(PYODIDE_JS_URL)
         app.add_js_file("sphinx_pyodide.js")
         app.add_css_file("sphinx_pyodide.css")
-
-        msg = "This page contains interactive Python code blocks that require JavaScript to execute."
-        if app.config.pyodide_build_output:
-            msg += " Static output is displayed below for reference."
-        else:
-            msg += " The code blocks will not run without JavaScript."
-        banner = (
-            f'<noscript><div class="pyodide-noscript-banner">{msg}</div></noscript>'
-        )
-        doctree.insert(0, nodes.raw("", banner, format="html"))
 
 
 def setup(app: Sphinx) -> dict[str, bool | str]:

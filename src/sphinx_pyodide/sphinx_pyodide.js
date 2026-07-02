@@ -22,14 +22,11 @@ async function runPyodideCode(block_id) {
   window.pyodide.setStdout();
 }
 
-function setPyodideBlockStatus(block_id, status = "loading") {
+function setPyodideBlockStatus(block_id, status) {
   const block = document.getElementById(block_id);
   const statusEl = block.querySelector(".pyodide-status");
-  if (status == "loading") {
-    statusEl.classList.add(status);
-  } else {
-    statusEl.classList.replace("loading", status);
-  }
+  statusEl.classList.remove("loading", "success", "error", "idle");
+  statusEl.classList.add(status);
 }
 
 async function initPyodide() {
@@ -38,53 +35,42 @@ async function initPyodide() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
+function processPyodideBlocks() {
   const pyodide_blocks = Array.from(
     document.getElementsByClassName("pyodide-block")
   );
-  if (!pyodide_blocks.length) return;
-
-  pyodide_blocks.forEach((block) => {
-    const outputEl = block.querySelector(".pyodide-output");
-    const statusEl = block.querySelector(".pyodide-status");
-    if (outputEl) outputEl.style.display = "block";
-    if (statusEl) statusEl.style.display = "flex";
-    setPyodideBlockStatus(block.id, "loading");
-  });
-
-  try {
-    await initPyodide();
-  } catch (err) {
-    const msg = "Pyodide failed to load: " + (err.message || err);
-    document.querySelectorAll(".pyodide-output").forEach((el) => {
-      el.textContent = msg;
-    });
-    document.querySelectorAll(".pyodide-status").forEach((el) => {
-      el.classList.replace("loading", "error");
-    });
-    console.error(msg, err);
-    return;
-  }
 
   for (const block of pyodide_blocks) {
+    const outputEl = block.querySelector(".pyodide-output");
+    const statusEl = block.querySelector(".pyodide-status");
     const runBtn = block.querySelector(".pyodide-run-button");
-    try {
-      await runPyodideCode(block.id);
-      setPyodideBlockStatus(block.id, "success");
-      if (runBtn) runBtn.disabled = true;
-    } catch (err) {
-      if (block.dataset.showErrors) {
-        const outputEl = block.querySelector(".pyodide-output");
-        if (outputEl) outputEl.textContent = "Error: " + (err.message || err);
-      }
-      console.error(err);
-      setPyodideBlockStatus(block.id, "error");
+
+    if (outputEl) outputEl.style.display = "block";
+    if (statusEl) statusEl.style.display = "flex";
+
+    if (runBtn) {
+      setPyodideBlockStatus(block.id, "idle");
+    } else {
+      setPyodideBlockStatus(block.id, "loading");
+      (async () => {
+        try {
+          await runPyodideCode(block.id);
+          setPyodideBlockStatus(block.id, "success");
+        } catch (err) {
+          if (block.dataset.showErrors) {
+            const outputEl = block.querySelector(".pyodide-output");
+            if (outputEl) outputEl.textContent = "Error: " + (err.message || err);
+          }
+          console.error(err);
+          setPyodideBlockStatus(block.id, "error");
+        }
+      })();
     }
 
     const editor = block.querySelector(".highlight[contenteditable]");
-    if (editor) {
+    if (editor && runBtn) {
       editor.addEventListener("input", () => {
-        if (runBtn) runBtn.disabled = false;
+        runBtn.disabled = false;
       });
     }
   }
@@ -107,5 +93,26 @@ document.addEventListener("DOMContentLoaded", async function () {
         setPyodideBlockStatus(block.id, "error");
       }
     });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const enableButton = document.getElementById("pyodide-enable-button");
+  if (!enableButton) return;
+
+  enableButton.addEventListener("click", async () => {
+    enableButton.textContent = "Loading\u2026";
+    enableButton.disabled = true;
+
+    try {
+      await initPyodide();
+      enableButton.textContent = "\u2713 Enabled";
+      enableButton.classList.add("enabled");
+      processPyodideBlocks();
+    } catch (err) {
+      enableButton.textContent = "Failed to load";
+      enableButton.classList.add("error");
+      console.error("Pyodide failed to load:", err);
+    }
   });
 });

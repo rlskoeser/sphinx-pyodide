@@ -142,12 +142,61 @@ body[data-theme="dark"] {
   content: "❌";
 }
 
+.pyodide-status.idle {
+  color: var(--pyodide-color-muted);
+}
+
 .pyodide-status.success {
   color: var(--pyodide-status-success);
 }
 
 .pyodide-status.error {
   color: var(--pyodide-status-error);
+}
+
+.pyodide-output.has-output {
+  display: block;
+}
+
+.pyodide-output.has-output.has-error {
+  background: #fff0f0;
+  color: #c00;
+}
+
+.pyodide-output.has-output.has-error::before {
+  content: "⚠️ ";
+}
+
+.pyodide-enable-button {
+  padding: 6px 16px;
+  background: var(--pyodide-btn-bg);
+  color: var(--pyodide-btn-text);
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.pyodide-enable-button:hover {
+  background: var(--pyodide-btn-hover);
+}
+
+.pyodide-enable-button:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+
+.pyodide-enable-button.enabled {
+  background: var(--pyodide-status-success);
+  opacity: 1;
+}
+
+.pyodide-enable-button.error {
+  background: var(--pyodide-status-error);
+  opacity: 1;
 }
 
 .pyodide-noscript-banner {

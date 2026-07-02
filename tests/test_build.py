@@ -167,6 +167,17 @@ def test_pyodide_css_loaded(app: SphinxTestApp) -> None:
 
 
 @pytest.mark.sphinx("html", testroot="pyodide")
+def test_enable_banner_present(app: SphinxTestApp) -> None:
+    """Page contains the opt-in enable banner."""
+    app.build()
+    html = (app.outdir / "index.html").read_text(encoding="utf-8")
+    assert "pyodide-enable-banner" in html
+    assert "pyodide-enable-button" in html
+    assert "Enable Interactive" in html
+    assert "pyodide-noscript-banner" in html
+
+
+@pytest.mark.sphinx("html", testroot="pyodide")
 def test_output_container_present(app: SphinxTestApp) -> None:
     """Each block has a pyodide-output container."""
     app.build()
@@ -181,10 +192,10 @@ def test_output_container_present(app: SphinxTestApp) -> None:
     confoverrides={"pyodide_build_output": True},
 )
 def test_build_output_captured(app: SphinxTestApp) -> None:
-    """Build-time output capture populates noscript fallback."""
+    """Build-time output capture populates static output display."""
     app.build()
     html = (app.outdir / "index.html").read_text(encoding="utf-8")
-    assert "pyodide-noscript-output" in html
+    assert "has-output" in html
     assert "hello" in html
 
 
@@ -196,7 +207,7 @@ def test_shared_globals_between_blocks(app: SphinxTestApp) -> None:
     """Variable defined in first block is accessible in second block."""
     app.build()
     html = (app.outdir / "index.html").read_text(encoding="utf-8")
-    assert "pyodide-noscript-output" in html
+    assert "has-output" in html
     assert "42" in html
 
 
