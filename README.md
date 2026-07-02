@@ -16,6 +16,8 @@ Enable the extension by including in your Sphinx `conf.py`:
 extensions = ["sphinx_pyodide"]
 ```
 
+The output blocks support light and dark mode. For best results, use a Sphinx theme with built-in dark mode support such as [Furo](https://github.com/pradyunsg/furo) or the [PyData Sphinx Theme](https://github.com/pydata/pydata-sphinx-theme).
+
 Use in documentation files.
 
 ```rst
