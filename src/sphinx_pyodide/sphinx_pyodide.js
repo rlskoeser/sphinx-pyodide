@@ -2,8 +2,6 @@ async function runPyodideCode(block_id) {
   const block = document.getElementById(block_id);
   const outputEl = block.querySelector(".pyodide-output");
   const depsEl = block.querySelector("script.deps");
-  const codeEl = block.querySelector(".pyodide-code");
-
   if (outputEl) outputEl.textContent = "";
 
   if (depsEl) {
@@ -19,7 +17,8 @@ async function runPyodideCode(block_id) {
     },
   });
 
-  window.pyodide.runPython(`${codeEl.textContent}`);
+  const codeEl = block.querySelector(".pyodide-code") || block.querySelector(".highlight");
+  window.pyodide.runPython(codeEl.textContent);
   window.pyodide.setStdout();
 }
 
@@ -49,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const outputEl = block.querySelector(".pyodide-output");
     const statusEl = block.querySelector(".pyodide-status");
     if (outputEl) outputEl.style.display = "block";
-    if (statusEl) statusEl.style.display = "block";
+    if (statusEl) statusEl.style.display = "flex";
     setPyodideBlockStatus(block.id, "loading");
   });
 
@@ -68,9 +67,11 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   for (const block of pyodide_blocks) {
+    const runBtn = block.querySelector(".pyodide-run-button");
     try {
       await runPyodideCode(block.id);
       setPyodideBlockStatus(block.id, "success");
+      if (runBtn) runBtn.disabled = true;
     } catch (err) {
       if (block.dataset.showErrors) {
         const outputEl = block.querySelector(".pyodide-output");
@@ -79,5 +80,32 @@ document.addEventListener("DOMContentLoaded", async function () {
       console.error(err);
       setPyodideBlockStatus(block.id, "error");
     }
+
+    const editor = block.querySelector(".highlight[contenteditable]");
+    if (editor) {
+      editor.addEventListener("input", () => {
+        if (runBtn) runBtn.disabled = false;
+      });
+    }
   }
+
+  document.querySelectorAll(".pyodide-run-button").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const block = btn.closest(".pyodide-block");
+      if (!block) return;
+      setPyodideBlockStatus(block.id, "loading");
+      try {
+        await runPyodideCode(block.id);
+        setPyodideBlockStatus(block.id, "success");
+        btn.disabled = true;
+      } catch (err) {
+        if (block.dataset.showErrors) {
+          const outputEl = block.querySelector(".pyodide-output");
+          if (outputEl) outputEl.textContent = "Error: " + (err.message || err);
+        }
+        console.error(err);
+        setPyodideBlockStatus(block.id, "error");
+      }
+    });
+  });
 });

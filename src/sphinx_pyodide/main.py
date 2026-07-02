@@ -192,13 +192,24 @@ def visit_pyodide_node_html(self: object, node: PyodideNode) -> None:
             cls = "pyodide-noscript-output"
         noscript_output = f'<pre class="{cls}">{escaped}</pre>'
 
+    if node["editable"]:
+        highlighted_code = highlighted_code.replace(
+            '<div class="highlight">',
+            '<div class="highlight" contenteditable="true" spellcheck="false">',
+        )
+        editor = ""
+        run_button = """<button class="pyodide-run-button">▶ Run</button>"""
+    else:
+        editor = f'<pre class="pyodide-code" style="display: none;">{code}</pre>'
+        run_button = ""
+
     html = f"""
     <div class="pyodide-block" id="pyodide-block-{code_id}"{show_errors_attr}>
     {deps}
-    <pre class="pyodide-code" style="display: none;">{code}</pre>
+    {editor}
     {highlighted_code}
     <pre class="pyodide-output"></pre>
-    <div class="pyodide-status"></div>
+    <div class="pyodide-status">{run_button}</div>
     <noscript>
     {noscript_output}
     </noscript>

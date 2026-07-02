@@ -56,53 +56,70 @@ body[data-theme="dark"] {
   border-radius: 0;
 }
 
-.pyodide-editor {
-  background: var(--pyodide-bg-muted);
+.pyodide-block .highlight[contenteditable="true"] {
+  cursor: text;
+  position: relative;
+}
+
+.pyodide-block .highlight[contenteditable="true"]::after {
+  content: "✏️";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 12px;
+  opacity: 0.35;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  transform: scaleX(-1);
+}
+
+.pyodide-block .highlight[contenteditable="true"]:hover::after,
+.pyodide-block .highlight[contenteditable="true"]:focus::after {
+  opacity: 0.7;
+}
+
+.pyodide-block .highlight[contenteditable="true"]:focus {
+  outline: 2px solid var(--pyodide-btn-bg);
+  outline-offset: -2px;
 }
 
 .pyodide-code {
-  width: 100%;
-  min-height: 100px;
-  padding: 10px;
-  font-size: 14px;
-  border: none;
-  background: var(--pyodide-bg-muted);
-  color: inherit;
-  resize: vertical;
-  box-sizing: border-box;
-}
-
-.pyodide-controls {
-  padding: 10px;
-  background: var(--pyodide-bg-white);
-  border-top: 1px solid var(--pyodide-block-border);
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: none;
 }
 
 .pyodide-run-button {
-  padding: 6px 16px;
+  margin-left: auto;
+  padding: 2px 10px;
   background: var(--pyodide-btn-bg);
   color: var(--pyodide-btn-text);
   border: none;
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .pyodide-run-button:hover {
   background: var(--pyodide-btn-hover);
 }
 
+.pyodide-run-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.pyodide-run-button:disabled:hover {
+  background: var(--pyodide-btn-bg);
+}
+
 .pyodide-status {
   display: none;
+  align-items: center;
+  gap: 4px;
   font-size: smaller;
-  text-align: right;
   color: var(--pyodide-color-muted);
   background: var(--pyodide-bg-status);
-  padding-right: 5px;
-  padding-bottom: 5px;
+  padding: 2px 8px;
 }
 
 .pyodide-block[data-show-errors] .pyodide-status::before {
